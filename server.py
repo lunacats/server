@@ -11,43 +11,80 @@ COMMAND_BYTE_PAIR = bytearray(b'\xFF\xEE')
 def sendToArduio(command):
 	print(COMMAND_BYTE_PAIR.append(command))
 	ser.write(COMMAND_BYTE_PAIR.append(command))
+	
 # functions to interface with arduino
 def button1():
-	sendToArduio(bytearray(b'\xB1'))
 	print("Button 1 command recieved")
+	x = bytearray(b'\xB1')
+	print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+	sendToArduio(x))
+	
 def button2():
 	print("Button 2 command recieved")
-	sendToArduio(bytearray(b'\xB2'))
+	x = bytearray(b'\xB2')
+	print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+	sendToArduio(x))
+
 def button3():
 	print("Button 3 command recieved")
-	sendToArduio(bytearray(b'\xB3'))
+	x = bytearray(b'\xB3')
+	print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+	sendToArduio(x))
+
 def button4():
 	print("Button 4 command recieved")
-	sendToArduio(bytearray(b'\xB4'))
+	x = bytearray(b'\xB4')
+	print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+	sendToArduio(x))
+
 def button5():
 	print("Button 5 command recieved")
-	sendToArduio(bytearray(b'\xB5'))
+	x = bytearray(b'\xB5')
+	print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+	sendToArduio(x))
+
 def button6():
 	print("Button 6 command recieved")
-	sendToArduio(bytearray(b'\xB6'))
+	x = bytearray(b'\xB6')
+	print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+	sendToArduio(x))
+
 def button7():
-	sendToArduio(bytearray(b'\xB7'))
 	print("Button 7 command recieved")
+	x = bytearray(b'\xB7')
+	print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+	sendToArduio(x))
+
 def button8():
 	print("Button 8 command recieved")
-	sendToArduio(bytearray(b'\xB8'))
+	x = bytearray(b'\xB8')
+	print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+	sendToArduio(x))
+
 def button9():
 	print("Button 9 command recieved")
-	sendToArduio(bytearray(b'\xB9'))
+	sx = bytearray(b'\xB9')
+	print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+	sendToArduio(x))
+
 def button10():
 	print("Button 10 command recieved")
-	sendToArduio(bytearray(b'\xB0'))
+	x = bytearray(b'\xB0')
+	print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+	sendToArduio(x))
+
 def button11():
 	print("Button 11 command recieved")
-	sendToArduio(bytearray(b'\xBA'))
+	x = bytearray(b'\xBA')
+	print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+	sendToArduio(x))
+
 def button12():
 	print("Button 12 command recieved")
-	sendToArduio(bytearray(b'\xBB'))
+	x = bytearray(b'\xBB')
+	print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+	sendToArduio(x))
+
 	
 # byte assignments for commands TODO
 commands = {
