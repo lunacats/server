@@ -209,3 +209,4 @@ while True:  # during control loop
         if event.type == pygame.JOYHATMOTION:
             handlecontrol(event.hat,event.value,"hat")
 
+#
