@@ -11,176 +11,177 @@ COMMAND_BYTE_PAIR = bytearray(b'\xFF\xEE')
 
 
 def sendToArduino(command):
-    print(COMMAND_BYTE_PAIR.append(command))
-    ser.write(COMMAND_BYTE_PAIR.append(command))
+    data = COMMAND_BYTE_PAIR
+    ser.write(command)
+    print(ser.read())
 
 
 # functions to interface with arduino
 def button1():
     print("Button 1 command recieved")
-    x = bytearray(b'\xB1')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xB1"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button2():
     print("Button 2 command recieved")
-    x = bytearray(b'\xB2')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xB2"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button3():
     print("Button 3 command recieved")
-    x = bytearray(b'\xB3')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xB3"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button4():
     print("Button 4 command recieved")
-    x = bytearray(b'\xB4')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xB4"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button5():
     print("Button 5 command recieved")
-    x = bytearray(b'\xB5')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xB5"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button6():
     print("Button 6 command recieved")
-    x = bytearray(b'\xB6')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xB6"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button7():
     print("Button 7 command recieved")
-    x = bytearray(b'\xB7')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xB7"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button8():
     print("Button 8 command recieved")
-    x = bytearray(b'\xB8')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xB8"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button9():
     print("Button 9 command recieved")
-    x = bytearray(b'\xB9')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xB9"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button10():
     print("Button 10 command recieved")
-    x = bytearray(b'\xB0')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xB0"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button11():
     print("Button 11 command recieved")
-    x = bytearray(b'\xBA')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xBA"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button12():
     print("Button 12 command recieved")
-    x = bytearray(b'\xBB')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xBB"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def dpadup():
     print("dpad up command recieved")
-    x = bytearray(b'\xD1')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xD1"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def dpadright():
     print("dpad right command recieved")
-    x = bytearray(b'\xD2')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xD2"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def dpaddown():
     print("dpad down command recieved")
-    x = bytearray(b'\xD3')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xD3"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def dpadleft():
     print("dpad left command recieved")
-    x = bytearray(b'\xD4')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xD4"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def lstickup():
     print("left stick up command recieved")
-    x = bytearray(b'\xD6')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xD6"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def lstickright():
     print("left stick up command recieved")
-    x = bytearray(b'\xD7')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xD7"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def lstickdown():
     print("left stick up command recieved")
-    x = bytearray(b'\xD8')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xD8"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def lstickleft():
     print("left stick up command recieved")
-    x = bytearray(b'\xD9')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xD9"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def rstickup():
     print("left stick up command recieved")
-    x = bytearray(b'\xDB')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xDB"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def rstickright():
     print("left stick up command recieved")
-    x = bytearray(b'\xDC')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xDC"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def rstickdown():
     print("left stick up command recieved")
-    x = bytearray(b'\xDD')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xDD"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def rstickleft():
     print("left stick up command recieved")
-    x = bytearray(b'\xDE')
-    print("Sending command %s to arduino", COMMAND_BYTE_PAIR.append(x))
+    x = "\xDE"
+    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 # byte assignments for commands TODO
@@ -226,6 +227,8 @@ commands = {
     b'\xDE': rstickleft,
 }
 
+def default():
+    print("Invalid joystick input")
 
 def startServer():
     # start server
@@ -236,7 +239,10 @@ def startServer():
     sock.bind((UDP_IP, UDP_PORT))
     while True:
         data, addr = sock.recvfrom(1024)
-        commands[data]()
+        try:
+            commands[data]()
+        except KeyError:
+            default()
         # send response
         sock.sendto(data, addr)
 
