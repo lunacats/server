@@ -12,11 +12,11 @@
 # should be installed to autorun on pi for the bot once completed
 #
 
-
-
 import serial
-import socket
 import pygame
+
+COMMAND_BYTE_PAIR = bytearray(b'\xFF\xEE')
+
 
 ser = serial.Serial('/dev/tty4', 9600)
 
@@ -25,6 +25,10 @@ pygame.joystick.init()  # init pygame joysticks
 joysticks = pygame.joystick.Joystick(0)
 
 joycount = pygame.joystick.get_count()
+
+if joycount==0:
+    sys.exit
+
 print( joycount )
 for x in (0, joycount):
     print(joysticks)  # print list of connected controllers
@@ -159,12 +163,13 @@ def handlehat(number, value):
             senddata(b'\xD4')
 
 
-def handlecontrol( number, value, conttype = "button" ):
+def handlecontrol(number, value, conttype="button"):
     """
 
     :param number: the ID number of the button, axis, or other control
     :param value:   the value inputted. the meaning will depend on control type.
-                    button values are down and up for pressed and released
+            # This while loop is like the main for client.py. Python files don't necessarily need mains when used like this.
+        button values are down and up for pressed and released
                     respectively
     :param conttype: default is "button". there is also "axis"
     :return:
@@ -177,22 +182,16 @@ def handlecontrol( number, value, conttype = "button" ):
         handlehat(number, value)
 
 
-def sendToArduino(command):
+
+def senddata(command):
+    """
+    :param command: the data that gets sent to the arduino, to be handled and control the motors
+    :return: no return
+    """
     print(COMMAND_BYTE_PAIR.append(command))
     ser.write(COMMAND_BYTE_PAIR.append(command))
 
 
-def senddata( message ):
-    """
-    :param message: the data that gets sent to the arduino, to be handled and control the motors
-    :return: no return
-    """
-    sendToArduino(b'\xFF')
-    sendToArduino(b'\xFE')
-    sendToArduino(message)
-
-
-# This while loop is like the main for client.py. Python files don't necessarily need mains when used like this.
 
 
 while True:  # during control loop
