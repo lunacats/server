@@ -1,14 +1,13 @@
-
+#include <Servo.h>
 
 /*Arduino code for the 2017/18 Lunabot. Takes input
   from the RasPi serial commands and converts to actions.
   Makes use of Servo Library.
+
+  hosted on the lunacats github at https://github.com/lunacats/server
   
-  Adapted by Alfred Odierno 3/13/18
- */
-
-
-#include <Servo.h>
+  @authors Aldred Odierno, Bryant Volk, Garret Wedge
+*/
 
 //------------------------- Actions --------------------------------------//
 // Change the Hex to match the controller actions (buttons etc..)
@@ -26,7 +25,6 @@
 #define AUG_DOWN 0xB5
 #define AUTO_MINE 0xB2
 #define E_STOP 0xB1
-
 //------------------------- Pins ----------------------------------------//
 //Motors
 #define LDRIVE_PIN 13
@@ -40,26 +38,18 @@
 #define LBSDR_PIN 5
 #define RBSCR_PIN 4
 #define RBSDR_PIN 3
-
-
 //Limit Switches     I hope we have have enough pins left for these. 
 #define A_up 0
 #define A_down 0
              //In reality, I don't think we'll need these...
 #define F_up 0
 #define F_down 
-
-
-
-
 //-----------------------Servos-----------------
-//Defining the VEX Motor controllers as Servos
 Servo Ldrive;
 Servo Rdrive;
 Servo Lact;
 Servo Ract;
 Servo Cbelt;
-
 //-------------------------MISC---------------------------------------
 // The numbers are based on servo angles 0'-180'. For our case, 90' is NEUTRAL. Some buffer is given on either side.  
 #define POS 170 //FULL Forward
@@ -72,7 +62,6 @@ Servo Cbelt;
 #define UP 1
 #define DOWN -1
 #define wait 1500
-
 //------------------------- toggle bools ----------------------------------------//
 int toggleFrameUp = 0;
 int toggleFrameDown = 0;
@@ -80,8 +69,21 @@ int toggleAugOn = 0;
 int toggleAugRev = 0;
 int toggleAugUp = 0;
 int toggleAugDown = 0;
-void setup( )
-{
+//------------------------- function defs ---------------------------------------//
+int leftForward();
+int rightForward();
+int rightReverse();
+int leftReverse();
+int frameUp();
+int frameDown();
+int augerOn();
+int augerRev();
+int augerUp();
+int augerDown();
+void eStop();
+//------------------------------------------------------------------------------//
+
+void setup() {
   //Initialize Ldrive
   Ldrive.attach(LDRIVE_PIN);
   Ldrive.write(NEUTRAL);
@@ -129,39 +131,12 @@ void setup( )
   Serial.begin( 9600 );
 }
 
-
-
-  byte curData = 0x00;
-  byte prevData;
-
-void loop( )
-{
-    if(Serial.available() > 0)
-    {
+void loop() {
+    if(Serial.available() > 0) {
       byte data = Serial.read();
       Serial.write(data);
       readCommand(data);
-        
-        //prevData = curData;
-  //    Serial.print("prevData = ");
-  //    //Serial.write(prevData);
-      
-        //curData = Serial.read();
-
-
-        
-//      Serial.print("Byte read. Now curData = ");
-//      //Serial.write(curData);
-      
-      //Commands start with the header 0xFF 0xEE at the moment
-//        if( prevData == 0xFF && curData == 0xEE )
-//        {
-////        //Serial.write( "VALID COMMAND Executing" );
-//          byte command = Serial.read();
-//          readCommand(command);
-//        }
-    }  
-  
+    }
 }
 
 void readCommand(byte command) {
@@ -170,113 +145,175 @@ void readCommand(byte command) {
   // need to add cbelt
   switch (c) {
     case (int) LEFT_FWD:
-      Ldrive.write(POS);
-      delay(wait);
-      Ldrive.write(NEUTRAL);
+      leftForward();
       break;
     case (int) RIGHT_FWD:
-      Rdrive.write(POS);
-      delay(wait);
-      Rdrive.write(NEUTRAL);
+      rightForward();
       break;
     case (int) RIGHT_REV:
-      Rdrive.write(NEG);
-      delay(wait);
-      Rdrive.write(NEUTRAL);  
+      rightReverse(); 
       break;
     case (int) LEFT_REV:
-      Ldrive.write(NEG);
-      delay(wait);
-      Ldrive.write(NEUTRAL);  
+      leftReverse();
       break;
     case (int) FRAME_UP:
-      if (!toggleFrameUp) {
-        Lact.write(POS);
-        Ract.write(P_MOD); //One of the actual actuators moves at a slower rate, so PWM is modified to match speeeds.
-        toggleFrameUp = 1;
-      } else {
-        toggleFrameUp = 0;
-        Lact.write(NEUTRAL);
-        Ract.write(NEUTRAL);
-      }
+      toggleFrameUp = frameUp();
       break;
     case (int) FRAME_DOWN:
-      if (!toggleFrameDown) {
-        Lact.write(NEG);
-        Ract.write(N_MOD); //One of the actual actuators moves at a slower rate, so PWM is modified to match speeeds.
-        toggleFrameDown = 1;
-      } else {
-        Lact.write(NEUTRAL);  
-        Ract.write(NEUTRAL);
-        toggleFrameDown = 0;
-      }
+      toggleFrameDown = frameDown();
       break;
     case (int) AUG_ON:
-      if (!toggleAugOn) {
-        digitalWrite(AUGPWR_PIN, ON);
-        toggleAugOn = 1;
-      } else {
-        digitalWrite(AUGPWR_PIN, OFF);
-        toggleAugOn = 0;
-      }
+      toggleAugOn = augerOn();
       break;
     case (int) AUG_REV:
-      if (!toggleAugRev) {
-        digitalWrite(AUGPWR_PIN, ON);
-        digitalWrite(AUGDIR_PIN, ON);
-        toggleAugRev = 1;
-      } else {
-        digitalWrite(AUGPWR_PIN, OFF);
-        digitalWrite(AUGDIR_PIN,OFF);
-        toggleAugRev = 0;
-      }
+      toggleAugRev = augerRev();
       break;
     case (int) AUG_UP:
-      digitalWrite(LBSDR_PIN, HIGH); // Enables left ball screw the motor to move in a particular direction
-      digitalWrite(RBSDR_PIN, HIGH); // Enables the right ball screw motor to move in a particular direction
-      if (!toggleAugUp) {
-        digitalWrite(LBSCR_PIN, HIGH); 
-        digitalWrite(RBSCR_PIN, HIGH); //If on of the ballscrews turn at a slower rate it will need its own delay
-        toggleAugUp = 1;
-//        if (digitalRead(A_up)== HIGH)
-//          break;
-      } else {
-        digitalWrite(LBSCR_PIN, LOW);
-        digitalWrite(RBSCR_PIN, LOW);
-        toggleAugUp = 0;
-      }
+      toggleAugUp = augerUp();
       break;
     case (int) AUG_DOWN:
-      digitalWrite(LBSDR_PIN, LOW); // Enables the left stepper motor to move in a particular direction
-      digitalWrite(RBSDR_PIN, LOW); // Enables the right stepper motor to move in a particular direction
-      if (!toggleAugDown) {
-        digitalWrite(LBSCR_PIN, HIGH); 
-        digitalWrite(RBSCR_PIN, HIGH); //If on of the ballscrews turn at a slower rate it will need its own delay
-        toggleAugUp = 1;
-      } else {
-        digitalWrite(LBSCR_PIN,LOW);
-        digitalWrite(RBSCR_PIN, LOW);
-        toggleAugDown = 0;
-      }
+      toggleAugDown = augerDown();
       break;
     case (int) E_STOP:
-      Ldrive.write(NEUTRAL);
-      Rdrive.write(NEUTRAL);
-      Lact.write(NEUTRAL);
-      Ract.write(NEUTRAL);
-      Cbelt.write(NEUTRAL);    
-      digitalWrite(AUGPWR_PIN, OFF);
-      digitalWrite(AUGDIR_PIN, OFF);
-      digitalWrite(LBSCR_PIN, OFF);
-      digitalWrite(RBSCR_PIN, OFF);
-      digitalWrite(LBSDR_PIN, OFF);
-      digitalWrite(RBSDR_PIN, OFF);
+      eStop();
       break;
   }
 }
 
 //====================== readCommand( Serial ser )==============
 //Read a command from the given Serial connection 
+
+/* function to move the left drive forward */
+int leftForward() {
+  Ldrive.write(POS);
+  delay(wait);
+  Ldrive.write(NEUTRAL);
+  return 1;
+}
+
+/* function to move the right drive forward */
+int rightForward() {
+  Rdrive.write(POS);
+  delay(wait);
+  Rdrive.write(NEUTRAL);
+  return 1;
+}
+
+/* function to move the right drive in reverse */
+int rightReverse() {
+  Rdrive.write(NEG);
+  delay(wait);
+  Rdrive.write(NEUTRAL);
+  return 1;
+}
+
+/* function to move the left drive in reverse */
+int leftReverse() {
+  Ldrive.write(NEG);
+  delay(wait);
+  Ldrive.write(NEUTRAL);
+  return 1;
+}
+
+/* 
+  function to raise the frame
+  this is a toggle. it returns the value to set the global toggle to
+  @returns 1 if frame is raising, 0 if frame is stopped raising
+*/
+int frameUp() {
+  if (!toggleFrameUp) {
+    Lact.write(POS);
+    Ract.write(P_MOD); //One of the actual actuators moves at a slower rate, so PWM is modified to match speeeds.       toggleFrameUp = 1;
+    return 1;
+  } else {
+    Lact.write(NEUTRAL);
+    Ract.write(NEUTRAL);
+    return 0;
+  }
+}
+
+/*
+  function to lower the frame
+  this is a toggle
+  @returns 1 if frame is lowering, 0 if frame is stopped lowering
+*/
+int frameDown() {
+  if (!toggleFrameDown) {
+    Lact.write(NEG);
+    Ract.write(N_MOD); //One of the actual actuators moves at a slower rate, so PWM is modified to match speeeds.
+    return 1;
+  } else {
+    Lact.write(NEUTRAL);  
+    Ract.write(NEUTRAL);
+    return 0;
+  }
+}
+
+int augerOn() {
+  if (!toggleAugOn) {
+    digitalWrite(AUGPWR_PIN, ON);
+    return 1;
+  } else {
+    digitalWrite(AUGPWR_PIN, OFF);
+    return 0;
+  }
+}
+
+int augerRev() {
+  if (!toggleAugRev) {
+    digitalWrite(AUGPWR_PIN, ON);
+    digitalWrite(AUGDIR_PIN, ON);
+    return 1;
+  } else {
+    digitalWrite(AUGPWR_PIN, OFF);
+    digitalWrite(AUGDIR_PIN,OFF);
+    return 0;
+  }
+}
+
+int augerUp() {
+  digitalWrite(LBSDR_PIN, HIGH); // Enables left ball screw the motor to move in a particular direction
+  digitalWrite(RBSDR_PIN, HIGH); // Enables the right ball screw motor to move in a particular direction
+  if (!toggleAugUp) {
+    digitalWrite(LBSCR_PIN, HIGH); 
+    digitalWrite(RBSCR_PIN, HIGH); //If on of the ballscrews turn at a slower rate it will need its own delay
+    return 1;
+    //if (digitalRead(A_up)== HIGH)
+    //break;
+  } else {
+    digitalWrite(LBSCR_PIN, LOW);
+    digitalWrite(RBSCR_PIN, LOW);
+    return 0;
+  }
+}
+
+int augerDown() {
+  digitalWrite(LBSDR_PIN, LOW); // Enables the left stepper motor to move in a particular direction
+  digitalWrite(RBSDR_PIN, LOW); // Enables the right stepper motor to move in a particular direction
+  if (!toggleAugDown) {
+    digitalWrite(LBSCR_PIN, HIGH); 
+    digitalWrite(RBSCR_PIN, HIGH); //If on of the ballscrews turn at a slower rate it will need its own delay
+    return 1;
+  } else {
+    digitalWrite(LBSCR_PIN,LOW);
+    digitalWrite(RBSCR_PIN, LOW);
+    return 0;
+  }
+}
+
+void eStop() {
+  Ldrive.write(NEUTRAL);
+  Rdrive.write(NEUTRAL);
+  Lact.write(NEUTRAL);
+  Ract.write(NEUTRAL);
+  Cbelt.write(NEUTRAL);    
+  digitalWrite(AUGPWR_PIN, OFF);
+  digitalWrite(AUGDIR_PIN, OFF);
+  digitalWrite(LBSCR_PIN, OFF);
+  digitalWrite(RBSCR_PIN, OFF);
+  digitalWrite(LBSDR_PIN, OFF);
+  digitalWrite(RBSDR_PIN, OFF);
+}
 
 void readCommand1(byte command)
 {
