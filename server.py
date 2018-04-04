@@ -18,170 +18,146 @@ def sendToArduino(command):
 
 # functions to interface with arduino
 def button1():
-    print("Button 1 command recieved")
+    print("Button 1 command [E_STOP] recieved")
     x = "\xB1"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button2():
-    print("Button 2 command recieved")
+    print("Button 2 [AUTO_MINE] command recieved")
     x = "\xB2"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button3():
-    print("Button 3 command recieved")
+    print("Button 3 [AUG_ON] command recieved")
     x = "\xB3"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button4():
-    print("Button 4 command recieved")
+    print("Button 4 [AUG_REV] command recieved")
     x = "\xB4"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button5():
-    print("Button 5 command recieved")
+    print("Button 5 [AUG_DOWN] command recieved")
     x = "\xB5"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button6():
-    print("Button 6 command recieved")
+    print("Button 6 [FRAME_DOWN] command recieved")
     x = "\xB6"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button7():
-    print("Button 7 command recieved")
+    print("Button 7 [AUG_UP] command recieved")
     x = "\xB7"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button8():
-    print("Button 8 command recieved")
+    print("Button 8 [FRAME_UP] command recieved")
     x = "\xB8"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button9():
     print("Button 9 command recieved")
     x = "\xB9"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button10():
     print("Button 10 command recieved")
     x = "\xB0"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button11():
     print("Button 11 command recieved")
     x = "\xBA"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def button12():
     print("Button 12 command recieved")
     x = "\xBB"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def dpadup():
     print("dpad up command recieved")
     x = "\xD1"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def dpadright():
     print("dpad right command recieved")
     x = "\xD2"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def dpaddown():
     print("dpad down command recieved")
     x = "\xD3"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def dpadleft():
     print("dpad left command recieved")
     x = "\xD4"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def lstickup():
     print("left stick up command recieved")
     x = "\xD6"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def lstickright():
     print("left stick up command recieved")
     x = "\xD7"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def lstickdown():
     print("left stick up command recieved")
     x = "\xD8"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def lstickleft():
     print("left stick up command recieved")
     x = "\xD9"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def rstickup():
     print("left stick up command recieved")
     x = "\xDB"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def rstickright():
     print("left stick up command recieved")
     x = "\xDC"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def rstickdown():
     print("left stick up command recieved")
     x = "\xDD"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 
 def rstickleft():
     print("left stick up command recieved")
     x = "\xDE"
-    print("Sending command %s to arduino" %x)
     sendToArduino(x)
 
 # byte assignments for commands TODO
