@@ -12,7 +12,7 @@ COMMAND_BYTE_PAIR = bytearray(b'\xFF\xEE')
 
 def sendToArduino(command):
     data = COMMAND_BYTE_PAIR
-    ser.write(command.encode())
+    ser.write(command)
     print(ser.read())
 
 
