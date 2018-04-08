@@ -271,7 +271,6 @@ int augerRev() {
     digitalWrite(AUGDIR_PIN, ON);
     return 1;
   } else {
-    digitalWrite(AUGPWR_PIN, OFF);
     digitalWrite(AUGDIR_PIN,OFF);
     return 0;
   }
