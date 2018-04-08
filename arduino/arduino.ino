@@ -12,8 +12,10 @@
 //------------------------- Actions --------------------------------------//
 // Change the Hex to match the controller actions (buttons etc..)
 #define LEFT_FWD 0xD6
+#define LEFT_NEUTRAL 0xD0
 #define LEFT_REV 0xD8
 #define RIGHT_FWD 0xDB
+#define RIGHT_NEUTRAL 0xD5
 #define RIGHT_REV 0xDD
 #define FRAME_UP 0xB8
 #define FRAME_DOWN 0xB6
@@ -70,10 +72,12 @@ int toggleAugRev = 0;
 int toggleAugUp = 0;
 int toggleAugDown = 0;
 //------------------------- function defs ---------------------------------------//
-int leftForward();
-int rightForward();
-int rightReverse();
-int leftReverse();
+void leftForward();
+void rightForward();
+void rightReverse();
+void leftReverse();
+void leftNeutral();
+void rightNeutral();
 int frameUp();
 int frameDown();
 int augerOn();
@@ -156,6 +160,12 @@ void readCommand(byte command) {
     case (int) LEFT_REV:
       leftReverse();
       break;
+    case (int) RIGHT_NEUTRAL:
+      rightNeutral();
+      break;
+    case (int) LEFT_NEUTRAL:
+      leftNeutral();
+      break;
     case (int) FRAME_UP:
       toggleFrameUp = frameUp();
       break;
@@ -184,35 +194,31 @@ void readCommand(byte command) {
 //Read a command from the given Serial connection 
 
 /* function to move the left drive forward */
-int leftForward() {
+void leftForward() {
   Ldrive.write(POS);
-  delay(wait);
+}
+
+void leftNeutral() {
   Ldrive.write(NEUTRAL);
-  return 1;
 }
 
 /* function to move the right drive forward */
-int rightForward() {
+void rightForward() {
   Rdrive.write(POS);
-  delay(wait);
-  Rdrive.write(NEUTRAL);
-  return 1;
 }
 
 /* function to move the right drive in reverse */
-int rightReverse() {
+void rightReverse() {
   Rdrive.write(NEG);
-  delay(wait);
+}
+
+void rightNeutral() {
   Rdrive.write(NEUTRAL);
-  return 1;
 }
 
 /* function to move the left drive in reverse */
-int leftReverse() {
+void leftReverse() {
   Ldrive.write(NEG);
-  delay(wait);
-  Ldrive.write(NEUTRAL);
-  return 1;
 }
 
 /* 

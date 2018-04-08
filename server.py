@@ -5,14 +5,14 @@ import serial
 # replace [serial_item] with output of ls dev/tty*
 # https://oscarliang.com/connect-raspberry-pi-and-arduino-usb-cable/
 # second argument is baud rate
-ser = serial.Serial('/dev/tty4', 9600)
+ser = serial.Serial('/dev/ttyACM0', 9600)
 # to avoid interpreting noise, these are the first two bytes of every command
 COMMAND_BYTE_PAIR = bytearray(b'\xFF\xEE')
 
 
 def sendToArduino(command):
     data = COMMAND_BYTE_PAIR
-    ser.write(command)
+    ser.write(command.encode())
     print(ser.read())
 
 
