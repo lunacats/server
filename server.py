@@ -118,47 +118,31 @@ def lstickup():
     x = "\xD6"
     sendToArduino(x)
 
-
-def lstickright():
-    print("left stick up command recieved")
-    x = "\xD7"
-    sendToArduino(x)
-
-
 def lstickdown():
-    print("left stick up command recieved")
+    print("left stick down command recieved")
     x = "\xD8"
     sendToArduino(x)
 
-
-def lstickleft():
-    print("left stick up command recieved")
-    x = "\xD9"
+def lstickneutral():
+    print("left stick neutral command recieved")
+    x = "\xD0"
     sendToArduino(x)
 
-
 def rstickup():
-    print("left stick up command recieved")
+    print("right stick up command recieved")
     x = "\xDB"
     sendToArduino(x)
 
-
-def rstickright():
-    print("left stick up command recieved")
-    x = "\xDC"
-    sendToArduino(x)
-
-
 def rstickdown():
-    print("left stick up command recieved")
+    print("right stick down command recieved")
     x = "\xDD"
     sendToArduino(x)
 
-
-def rstickleft():
-    print("left stick up command recieved")
-    x = "\xDE"
+def rstickneutral():
+    print("right stick neutral command recieved")
+    x = "\xD5"
     sendToArduino(x)
+
 
 # byte assignments for commands TODO
 #
@@ -194,13 +178,11 @@ commands = {
     b'\xD3': dpaddown,
     b'\xD4': dpadleft,
     b'\xD6': lstickup,
-    b'\xD7': lstickright,
     b'\xD8': lstickdown,
-    b'\xD9': lstickleft,
     b'\xDB': rstickup,
-    b'\xDC': rstickright,
     b'\xDD': rstickdown,
-    b'\xDE': rstickleft,
+    b'\xD5': rstickneutral,
+    b'\xD0': lstickneutral,
 }
 
 def default():
