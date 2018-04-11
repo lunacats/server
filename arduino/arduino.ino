@@ -29,17 +29,17 @@
 #define E_STOP 0xB1
 //------------------------- Pins ----------------------------------------//
 //Motors
-#define LDRIVE_PIN 13
-#define RDRIVE_PIN 12
+#define LDRIVE_PIN 12
+#define RDRIVE_PIN 13
 #define LACT_PIN 11
 #define RACT_PIN 10
 #define CBELT_PIN 9
 #define AUGPWR_PIN 8
 #define AUGDIR_PIN 7
-#define LBSCR_PIN 6
-#define LBSDR_PIN 5
+#define LBSCR_PIN 5
+#define LBSDR_PIN 6
 #define RBSCR_PIN 4
-#define RBSDR_PIN 3
+#define RBSDR_PIN 6
 //Limit Switches     I hope we have have enough pins left for these. 
 #define A_up 0
 #define A_down 0

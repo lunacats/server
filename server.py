@@ -177,8 +177,8 @@ commands = {
     b'\xD2': dpadright,
     b'\xD3': dpaddown,
     b'\xD4': dpadleft,
-    b'\xD6': lstickup,
-    b'\xD8': lstickdown,
+    b'\xD8': lstickup,
+    b'\xD6': lstickdown,
     b'\xDB': rstickup,
     b'\xDD': rstickdown,
     b'\xD5': rstickneutral,
@@ -190,7 +190,7 @@ def default():
 
 def startServer():
     # start server
-    UDP_IP = "127.0.0.1"
+    UDP_IP = "10.42.0.229"
     UDP_PORT = 8000
     print("Starting connection with ip %s on port %d" % (UDP_IP, UDP_PORT))
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
