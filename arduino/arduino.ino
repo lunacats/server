@@ -19,8 +19,8 @@
 #define RIGHT_REV 0xDD
 #define FRAME_UP 0xB8
 #define FRAME_DOWN 0xB6
-#define CBELT_ON 0xAA
-#define CBELT_REV 0xAA
+#define CBELT_ON 0xD1
+#define CBELT_REV 0xD3
 #define AUG_ON 0xB3
 #define AUG_REV 0xB4
 #define AUG_UP 0xB7
@@ -71,6 +71,8 @@ int toggleAugOn = 0;
 int toggleAugRev = 0;
 int toggleAugUp = 0;
 int toggleAugDown = 0;
+int toggleConveyerOn = 0;
+int toggleConveyerRev = 0;
 //------------------------- function defs ---------------------------------------//
 void leftForward();
 void rightForward();
@@ -84,6 +86,8 @@ int augerOn();
 int augerRev();
 int augerUp();
 int augerDown();
+int conveyerOn();
+int converyerRev();
 void eStop();
 //------------------------------------------------------------------------------//
 
@@ -165,6 +169,12 @@ void readCommand(byte command) {
       break;
     case (int) LEFT_NEUTRAL:
       leftNeutral();
+      break;
+    case (int) CBELT_ON:
+      toggleConveyerOn = conveyerOn();
+      break;
+    case (int) CBELT_REV:
+      toggleConveyerRev = conveyerRev();
       break;
     case (int) FRAME_UP:
       toggleFrameUp = frameUp();
@@ -255,6 +265,26 @@ int frameDown() {
   }
 }
 
+
+int conveyerOn() {
+  if (!toggleConveyerOn) {
+    Cbelt.write(POS);
+    return 1;
+  } else {
+    Cbelt.write(NEUTRAL);
+    return 0;
+  }
+}
+
+int conveyerRev() {
+  if (!toggleConveyerRev) {
+    Cbelt.write(NEG);
+    return 1;
+  } else {
+    Cbelt.write(NEUTRAL);
+    return 0;
+  }
+}
 int augerOn() {
   if (!toggleAugOn) {
     digitalWrite(AUGPWR_PIN, ON);
@@ -271,40 +301,62 @@ int augerRev() {
     digitalWrite(AUGDIR_PIN, ON);
     return 1;
   } else {
-    digitalWrite(AUGDIR_PIN,OFF);
+    digitalWrite(AUGDIR_PIN, OFF);
+    digitalWrite(AUGPWR_PIN, OFF);
+    toggleAugOn = 0;
     return 0;
   }
 }
 
 int augerUp() {
   digitalWrite(LBSDR_PIN, HIGH); // Enables left ball screw the motor to move in a particular direction
-  digitalWrite(RBSDR_PIN, HIGH); // Enables the right ball screw motor to move in a particular direction
-  if (!toggleAugUp) {
-    digitalWrite(LBSCR_PIN, HIGH); 
-    digitalWrite(RBSCR_PIN, HIGH); //If on of the ballscrews turn at a slower rate it will need its own delay
-    return 1;
-    //if (digitalRead(A_up)== HIGH)
-    //break;
-  } else {
+  for (int x = 0; x < 800; x++) {
+    digitalWrite(LBSCR_PIN, HIGH);
+    digitalWrite(RBSCR_PIN, HIGH);
+    delayMicroseconds(500);
     digitalWrite(LBSCR_PIN, LOW);
     digitalWrite(RBSCR_PIN, LOW);
-    return 0;
+    delayMicroseconds(500);
   }
+  // if (!toggleAugUp) {
+  //   digitalWrite(LBSCR_PIN, HIGH); 
+  //   digitalWrite(RBSCR_PIN, HIGH); //If on of the ballscrews turn at a slower rate it will need its own delay
+  //   delay(wait);
+  //   return 1;
+  //   //if (digitalRead(A_up)== HIGH)
+  //   //break;
+  // } else {
+  //   digitalWrite(LBSCR_PIN, LOW);
+  //   digitalWrite(RBSCR_PIN, LOW);
+  //   delay(wait);
+  //   return 0;
+  // }
 }
 
 int augerDown() {
-  digitalWrite(LBSDR_PIN, LOW); // Enables the left stepper motor to move in a particular direction
-  digitalWrite(RBSDR_PIN, LOW); // Enables the right stepper motor to move in a particular direction
-  if (!toggleAugDown) {
-    digitalWrite(LBSCR_PIN, HIGH); 
-    digitalWrite(RBSCR_PIN, HIGH); //If on of the ballscrews turn at a slower rate it will need its own delay
-    return 1;
-  } else {
-    digitalWrite(LBSCR_PIN,LOW);
+  digitalWrite(LBSDR_PIN, LOW); // Enables left ball screw the motor to move in a particular direction
+  for (int x = 0; x < 800; x++) {
+    digitalWrite(LBSCR_PIN, HIGH);
+    digitalWrite(RBSCR_PIN, HIGH);
+    delayMicroseconds(500);
+    digitalWrite(LBSCR_PIN, LOW);
     digitalWrite(RBSCR_PIN, LOW);
-    return 0;
+    delayMicroseconds(500);
   }
+  // digitalWrite(LBSDR_PIN, LOW); // Enables the left stepper motor to move in a particular direction
+  // digitalWrite(RBSDR_PIN, LOW); // Enables the right stepper motor to move in a particular direction
+  // if (!toggleAugDown) {
+  //   digitalWrite(LBSCR_PIN, HIGH); 
+  //   digitalWrite(RBSCR_PIN, HIGH); //If on of the ballscrews turn at a slower rate it will need its own delay
+  //   return 1;
+  // } else {
+  //   digitalWrite(LBSCR_PIN,LOW);
+  //   digitalWrite(RBSCR_PIN, LOW);
+  //   return 0;
+  // }
 }
+
+
 
 void eStop() {
   Ldrive.write(NEUTRAL);
