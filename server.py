@@ -1,7 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 import socket
+import pygame
 import serial
-
+import os
 # replace [serial_item] with output of ls dev/tty*
 # https://oscarliang.com/connect-raspberry-pi-and-arduino-usb-cable/
 # second argument is baud rate
@@ -187,14 +188,16 @@ commands = {
 
 def default():
     print("Invalid joystick input")
+    return 0
 
 def startServer():
     # start server
-    UDP_IP = "10.42.0.229"
+    UDP_IP = "10.42.0.56"
     UDP_PORT = 8000
     print("Starting connection with ip %s on port %d" % (UDP_IP, UDP_PORT))
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((UDP_IP, UDP_PORT))
+    #sock.sendto("HELLO", (UDP_IP, UDP_PORT))
     while True:
         data, addr = sock.recvfrom(1024)
         try:
@@ -204,7 +207,13 @@ def startServer():
         # send response
         sock.sendto(data, addr)
 
-
-startServer()
-
-#
+try:
+    pygame.init()
+    os.putenv('DISPLAY', ':0.0')
+    pygame.display.init()
+    import outreach
+    outreach = outreach.Outreach()
+    outreach.main()
+except pygame.error as message:
+    print(message)
+    startServer()

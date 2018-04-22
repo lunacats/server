@@ -6,14 +6,17 @@
 #  
 #  
 import socket
+import serial
 import pygame
+import os
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+ser = serial.Serial('/dev/ttyACM0', 9600)
 PORT = 8000
 IP = "10.42.0.56"
 
 
-class Client:
+class Outreach:
 
     def __init__(self):
         self.lastlcommand = ""
@@ -25,16 +28,23 @@ class Client:
 
     pygame.init()  # init pygame
     pygame.joystick.init()  # init pygame joysticks
+    os.putenv('DISPLAY', ':0.0')
+    pygame.display.init()
     joysticks = pygame.joystick.Joystick(0)
 
     print(joysticks)  # print list of connected controllers
 
+
+    def sendToArduino(self, command):
+        ser.write(command)
+        print(ser.read())
+        
     def senddata(self, message):
         """ This command uses the socket library to send a 2 byte message parameter
         :param message: the data that gets sent to the arduino, to be handled and control the motors
         :return: no return
         """
-        sendToArduino(self, message)
+        self.sendToArduino(message)
 
     # The steelseries gamepad used to set this up has the following characteristics
     # When running the controller test program, the axes are as follows:
@@ -146,11 +156,11 @@ class Client:
             if value < -sensitivity() and (self.lastlcommand != "f"):
                 self.lastlcommand = "f"
                 print("Left stick forward")
-                self.senddata( b'\xD6')
+                self.senddata( b'\xD8')
             elif value > sensitivity() and (self.lastlcommand != "b"):
                 self.lastlcommand = "b"
                 print("Left stick backward")
-                self.senddata( b'\xD8')
+                self.senddata( b'\xD6')
             elif value == 0.0:
                 if self.lastlcommand != "n":
                     self.lastlcommand = "n"
@@ -246,11 +256,5 @@ class Client:
                 if event.type == pygame.JOYHATMOTION:   # if the command is a d-pad being pressed
                     self.handlecontrol(event.hat,event.value,"hat")
 
-    def sendToArduino(self, command):
-        data = COMMAND_BYTE_PAIR
-        ser.write(command)
-        print(ser.read())
 
-client = Client()
-client.main()
 
