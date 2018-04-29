@@ -36,6 +36,10 @@
 #define CBELT_PIN 9
 #define AUGPWR_PIN 8
 #define AUGDIR_PIN 7
+//#define LBSCR_PIN 5
+//#define LBSDR_PIN 6
+//#define RBSCR_PIN 4
+//#define RBSDR_PIN 6
 #define BSCRUP_PIN 5 //had to change. broke a pin off in 6
 #define BSCRDN_PIN 4
 #define LIMSWUP_PIN 3
@@ -121,6 +125,22 @@ void setup() {
    //Initialize AugDir
   pinMode(AUGDIR_PIN, OUTPUT);
   digitalWrite(AUGDIR_PIN, OFF);
+  
+  //Initialize Lbscr
+  //pinMode(LBSCR_PIN, OUTPUT);
+  //digitalWrite(LBSCR_PIN, OFF);
+
+  //Initialize LeftBscrDir
+  //pinMode(LBSDR_PIN, OUTPUT);
+  //digitalWrite(RBSDR_PIN, OFF);
+  
+  //Initialize Rbscr
+  //pinMode(RBSCR_PIN, OUTPUT);
+  //digitalWrite(RBSCR_PIN, OFF);
+  
+  //Initialize RightBscrDir
+  //pinMode(RBSDR_PIN, OUTPUT);
+  //digitalWrite(RBSDR_PIN, OFF);
   
   //Initialize RightBscrDir
   pinMode(BSCRUP_PIN, OUTPUT);
@@ -312,7 +332,33 @@ int augerRev() {
 }
 
 int augerUp() {
-  if(digitalRead(LIMSWUP_PIN) == HIGH){//only allows the action if it's not at the top already
+  /*
+  digitalWrite(LBSDR_PIN, HIGH); // Enables left ball screw the motor to move in a particular direction
+  for (int x = 0; x < 800; x++) {
+    digitalWrite(LBSCR_PIN, HIGH);
+    digitalWrite(RBSCR_PIN, HIGH);
+    delayMicroseconds(500);
+    digitalWrite(LBSCR_PIN, LOW);
+    digitalWrite(RBSCR_PIN, LOW);
+    delayMicroseconds(500);
+  }
+  */
+  // if (!toggleAugUp) {
+  //   digitalWrite(LBSCR_PIN, HIGH); 
+  //   digitalWrite(RBSCR_PIN, HIGH); //If on of the ballscrews turn at a slower rate it will need its own delay
+  //   delay(wait);
+  //   return 1;
+  //   //if (digitalRead(A_up)== HIGH)
+  //   //break;
+  // } else {
+  //   digitalWrite(LBSCR_PIN, LOW);
+  //   digitalWrite(RBSCR_PIN, LOW);
+  //   delay(wait);
+  //   return 0;
+  // }
+ // status_up = digitalRead(LIMSWUP_PIN);
+
+  if(digitalRead(LIMSWUP_PIN) == HIGH){
       digitalWrite(BSCRUP_PIN, HIGH); // Enables the left stepper motor to move in a particular direction
       delay(wait);
       digitalWrite(BSCRUP_PIN, LOW); // Enables the left stepper motor to move in a particular direction
@@ -320,13 +366,38 @@ int augerUp() {
 }
 
 int augerDown() {
+  /*
+  digitalWrite(LBSDR_PIN, LOW); // Enables left ball screw the motor to move in a particular direction
+  for (int x = 0; x < 800; x++) {
+    digitalWrite(LBSCR_PIN, HIGH);
+    digitalWrite(RBSCR_PIN, HIGH);
+    delayMicroseconds(500);
+    digitalWrite(LBSCR_PIN, LOW);
+    digitalWrite(RBSCR_PIN, LOW);
+    delayMicroseconds(500);
+  }
+  */
+  // digitalWrite(LBSDR_PIN, LOW); // Enables the left stepper motor to move in a particular direction
+  // digitalWrite(RBSDR_PIN, LOW); // Enables the right stepper motor to move in a particular direction
+  // if (!toggleAugDown) {
+  //   digitalWrite(LBSCR_PIN, HIGH); 
+  //   digitalWrite(RBSCR_PIN, HIGH); //If on of the ballscrews turn at a slower rate it will need its own delay
+  //   return 1;
+  // } else {
+  //   digitalWrite(LBSCR_PIN,LOW);
+  //   digitalWrite(RBSCR_PIN, LOW);
+  //   return 0;`1
+  // }
 //  status_down = digitalRead(LIMSWDN_PIN);
- if(digitalRead(LIMSWDN_PIN) == HIGH){// only allows the action if it's not at the bottom already
+
+ if(digitalRead(LIMSWDN_PIN) == HIGH){
       digitalWrite(BSCRDN_PIN, HIGH); // Enables the left stepper motor to move in a particular direction
       delay(wait);
       digitalWrite(BSCRDN_PIN, LOW); // Enables the left stepper motor to move in a particular direction
-  } 
+  }
+ 
 }
+
 
 
 void eStop() {
@@ -337,8 +408,174 @@ void eStop() {
   Cbelt.write(NEUTRAL);    
   digitalWrite(AUGPWR_PIN, OFF);
   digitalWrite(AUGDIR_PIN, OFF);
+  //digitalWrite(LBSCR_PIN, OFF);
+  //digitalWrite(RBSCR_PIN, OFF);
+  //digitalWrite(LBSDR_PIN, OFF);
+  //digitalWrite(RBSDR_PIN, OFF);
   
   digitalWrite(BSCRUP_PIN, OFF);
   digitalWrite(BSCRDN_PIN, OFF);
 }
+
+void readCommand1(byte command)
+{
+  byte action = command;
+
+  if( action == LEFT_FWD ) //See Actions section for assignments
+  {
+    //Serial.write("Reading Action LEFT_FWD");
+    Ldrive.write(POS);
+    delay(wait);
+    Ldrive.write(NEUTRAL);
+  }
+  
+  if( action == RIGHT_FWD ) //See Actions section for assignments
+  {
+    //Serial.write("Reading Action RIGHT_FWD");
+    Rdrive.write(POS);
+    delay(wait);
+    Rdrive.write(NEUTRAL);    
+  }
+  
+  if( action == LEFT_REV ) //See Actions section for assignments
+  {
+    //Serial.write("Reading Action LEFT_REV");
+    Ldrive.write(NEG);
+    delay(wait);
+    Ldrive.write(NEUTRAL);    
+  }
+
+  if( action == RIGHT_REV ) //See Actions section for assignments
+  {
+    //Serial.write("Reading Action RIGHT_REV");
+    Rdrive.write(NEG);
+    delay(wait);
+    Rdrive.write(NEUTRAL);    
+  }  
+  
+  if( action == FRAME_UP ) //See Actions section for assignments
+  {
+    //while(digitalRead(F_up, LOW)){
+    //Serial.write("Reading Action FRAME_UP");
+    Lact.write(POS);
+    Ract.write(P_MOD); //One of the actual actuators moves at a slower rate, so PWM is modified to match speeeds.
+    delay(wait);
+    Lact.write(NEUTRAL);  
+    Ract.write(NEUTRAL); 
+  }
+  
+  if( action == FRAME_DOWN ) //See Actions section for assignments
+  {
+    //while(digitalRead(F_down, LOW)){
+    //Serial.write("Reading Action FRAME_DOWN");
+    Lact.write(NEG);
+    Ract.write(N_MOD); //One of the actual actuators moves at a slower rate, so PWM is modified to match speeeds.
+    delay(wait);
+    Lact.write(NEUTRAL);  
+    Ract.write(NEUTRAL); 
+  }
+  
+  if( action == CBELT_ON ) //See Actions section for assignments
+  {
+    //Serial.write("Reading Action CBELT_ON");
+    Cbelt.write(POS);
+    delay(wait);
+    Rdrive.write(NEUTRAL);    
+  }  
+  
+  if( action == CBELT_REV) //See Actions section for assignments
+  {
+    //Serial.write("Reading Action CBELT_REV");
+    Cbelt.write(NEG);
+    delay(wait);
+    Rdrive.write(NEUTRAL);    
+  }  
+  
+  if( action == AUG_ON ) //See Actions section for assignments
+  {
+    //Serial.write("Reading Action AUG_ON");
+    digitalWrite(AUGPWR_PIN, ON);
+    delay(wait);
+    digitalWrite(AUGPWR_PIN, OFF); 
+  }
+  
+  if( action == AUG_REV ) //See Actions section for assignments
+  {
+    //Serial.write("Reading Action AUG_REV");
+    digitalWrite(AUGPWR_PIN, ON);
+    digitalWrite(AUGDIR_PIN, ON);
+    delay(wait);
+    digitalWrite(AUGPWR_PIN, OFF);
+    digitalWrite(AUGDIR_PIN,OFF);
+  }
+  
+  if( action == AUG_UP ) //See Actions section for assignments
+  {
+    //Serial.write("Reading Action AUG_UP");
+    //while(digitalRead(A_up, LOW)){
+    /*
+    digitalWrite(LBSDR_PIN, HIGH); // Enables left ball screw the motor to move in a particular direction
+    digitalWrite(RBSDR_PIN, HIGH); // Enables the right ball screw motor to move in a particular direction
+    for(int x = 0; x < 200; x++)   // Makes 200 pulses for making one full cycle rotation
+    {
+      if (digitalRead(A_up)== HIGH)
+        break;
+      digitalWrite(LBSCR_PIN, HIGH); 
+      digitalWrite(RBSCR_PIN, HIGH); //If on of the ballscrews turn at a slower rate it will need its own delay
+      delayMicroseconds(500); 
+      digitalWrite(LBSCR_PIN,LOW);
+      digitalWrite(RBSCR_PIN, LOW);
+      delayMicroseconds(500); 
+    }
+    */
+
+    
+  }
+    
+  if( action == AUG_DOWN ) //See Actions section for assignments
+  {
+    //Serial.write("Reading Action AUG_DOWN"); 
+    //while(digitalRead(A_down, LOW)){
+    /*
+    digitalWrite(LBSDR_PIN, LOW); // Enables the left stepper motor to move in a particular direction
+    digitalWrite(RBSDR_PIN, LOW); // Enables the right stepper motor to move in a particular direction
+    for(int x = 0; x < 200; x++)   // Makes 200 pulses for making one full cycle rotation
+    {
+      digitalWrite(LBSCR_PIN, HIGH); 
+      digitalWrite(RBSCR_PIN, HIGH); //If on of the ballscrews turn at a slower rate it will need its own delay
+      delayMicroseconds(500); 
+      digitalWrite(LBSCR_PIN,LOW);
+      digitalWrite(RBSCR_PIN, LOW);
+      delayMicroseconds(500); 
+    }
+    */
+    
+    
+  }  
+  
+/*if( action == AUTO_MINE ) //See Actions section for assignments
+  {
+    //Serial.write("Reading Action AUTO_MINE"); 
+*/
+  
+  if( action == E_STOP ) //See Actions section for assignments
+  {
+    //Serial.write("Reading Action E_STOP"); 
+    Ldrive.write(NEUTRAL);
+    Rdrive.write(NEUTRAL);
+    Lact.write(NEUTRAL);
+    Ract.write(NEUTRAL);
+    Cbelt.write(NEUTRAL);    
+    digitalWrite(AUGPWR_PIN, OFF);
+    digitalWrite(AUGDIR_PIN, OFF);
+    //digitalWrite(LBSCR_PIN, OFF);
+    //digitalWrite(RBSCR_PIN, OFF);
+    //digitalWrite(LBSDR_PIN, OFF);
+    //digitalWrite(RBSDR_PIN, OFF);
+    digitalWrite(BSCRUP_PIN, OFF);
+    digitalWrite(BSCRDN_PIN, OFF);
+  
+  }
+}
+
 
