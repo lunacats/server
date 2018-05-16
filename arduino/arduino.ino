@@ -23,8 +23,8 @@
 #define CBELT_REV 0xD3
 #define AUG_ON 0xB3
 #define AUG_REV 0xB4
-#define AUG_UP 0xB7
-#define AUG_DOWN 0xB5
+#define AUG_UP 0xB5
+#define AUG_DOWN 0xB7
 #define AUTO_MINE 0xB2
 #define E_STOP 0xB1
 #define WHEEL_TOGGLE 0xD4
@@ -65,8 +65,8 @@ Servo Cbelt;
 #define UP 1
 #define DOWN -1
 #define wait 1000
-#define upwait 1250
-#define WHEEL_MOD 70 // wheel speed modification
+#define WHEEL_MOD_POS 110 // slower than 170
+#define WHEEL_MOD_NEG 70 // slower than 45
 //------------------------- toggle bools ----------------------------------------//
 int toggleFrameUp = 0;
 int toggleFrameDown = 0;
@@ -210,9 +210,9 @@ void readCommand(byte command) {
 
 /* function to move the left drive forward */
 void leftForward() {
-  if (digitalRead(LIMSWUP_PIN) == HIGH) { // only allow the wheels to move if the auger is tripping the limit switches
+  if (digitalRead(LIMSWUP_PIN) == LOW) { // only allow the wheels to move if the auger is tripping the limit switches
     if (toggleWheelSpeed) {
-      Ldrive.write(WHEEL_MOD);
+      Ldrive.write(WHEEL_MOD_POS);
     } else {
       Ldrive.write(POS);
     }
@@ -225,9 +225,9 @@ void leftNeutral() {
 
 /* function to move the right drive forward */
 void rightForward() {
-  if (digitalRead(LIMSWUP_PIN) == HIGH) { // only allow the wheels to move if the auger is tripping the limit switches
+  if (digitalRead(LIMSWUP_PIN) == LOW) { // only allow the wheels to move if the auger is tripping the limit switches
     if (toggleWheelSpeed) {
-      Rdrive.write(WHEEL_MOD);
+      Rdrive.write(WHEEL_MOD_POS);
     } else {
       Rdrive.write(POS);
     }
@@ -236,7 +236,13 @@ void rightForward() {
 
 /* function to move the right drive in reverse */
 void rightReverse() {
-  Rdrive.write(NEG);
+  if (digitalRead(LIMSWUP_PIN) == LOW) {
+    if (toggleWheelSpeed) {
+      Rdrive.write(WHEEL_MOD_NEG);
+    } else {
+      Rdrive.write(NEG);
+    }
+  }
 }
 
 void rightNeutral() {
@@ -245,7 +251,13 @@ void rightNeutral() {
 
 /* function to move the left drive in reverse */
 void leftReverse() {
-  Ldrive.write(NEG);
+  if (digitalRead(LIMSWUP_PIN) == LOW) { // only allow the wheels to move if the auger is tripping the limit switches
+    if (toggleWheelSpeed) {
+      Ldrive.write(WHEEL_MOD_NEG);
+    } else {
+      Ldrive.write(NEG);
+    }
+  }
 }
 
 /* toggle wheel speed */
@@ -338,7 +350,7 @@ int augerRev() {
 int augerUp() {
   if (!digitalRead(LIMSWUP_PIN) == LOW) {//only allows the action if it's not at the top already
       digitalWrite(BSCRUP_PIN, HIGH); // Enables the left stepper motor to move in a particular direction
-      delay(upwait);
+      delay(wait);
       digitalWrite(BSCRUP_PIN, LOW); // Enables the left stepper motor to move in a particular direction
   }
 }
