@@ -27,6 +27,7 @@
 #define AUG_DOWN 0xB5
 #define AUTO_MINE 0xB2
 #define E_STOP 0xB1
+#define WHEEL_TOGGLE 0xD4
 //------------------------- Pins ----------------------------------------//
 //Motors
 #define LDRIVE_PIN 12
@@ -57,13 +58,15 @@ Servo Cbelt;
 #define POS 170 //FULL Forward
 #define NEUTRAL 92 //STOP on VICTOR this number may have to be calibrated...
 #define NEG 10 //FULL Reverse
-#define P_MOD 160 //Allows matching of actuator speeds.
-#define N_MOD 20 
+#define P_MOD 140 //Allows matching of actuator speeds.
+#define N_MOD 45
 #define OFF LOW
 #define ON HIGH
 #define UP 1
 #define DOWN -1
 #define wait 1000
+#define upwait 1250
+#define WHEEL_MOD 70 // wheel speed modification
 //------------------------- toggle bools ----------------------------------------//
 int toggleFrameUp = 0;
 int toggleFrameDown = 0;
@@ -73,8 +76,7 @@ int toggleAugUp = 0;
 int toggleAugDown = 0;
 int toggleConveyerOn = 0;
 int toggleConveyerRev = 0;
-int status_up = 0;
-int status_down =0;
+int toggleWheelSpeed = 0;
 //------------------------- function defs ---------------------------------------//
 void leftForward();
 void rightForward();
@@ -82,6 +84,7 @@ void rightReverse();
 void leftReverse();
 void leftNeutral();
 void rightNeutral();
+int toggleWheelMod();
 int frameUp();
 int frameDown();
 int augerOn();
@@ -136,9 +139,6 @@ void setup() {
   //Initialize RightBscrDir
   pinMode(LIMSWDN_PIN, INPUT_PULLUP);
 
-
-
-  
   Serial.begin( 9600 );
 }
 
@@ -197,6 +197,8 @@ void readCommand(byte command) {
     case (int) AUG_DOWN:
       toggleAugDown = augerDown();
       break;
+    case (int) WHEEL_TOGGLE:
+      toggleWheelSpeed = toggleWheelMod();
     case (int) E_STOP:
       eStop();
       break;
@@ -208,7 +210,13 @@ void readCommand(byte command) {
 
 /* function to move the left drive forward */
 void leftForward() {
-  Ldrive.write(POS);
+  if (digitalRead(LIMSWUP_PIN) == HIGH) { // only allow the wheels to move if the auger is tripping the limit switches
+    if (toggleWheelSpeed) {
+      Ldrive.write(WHEEL_MOD);
+    } else {
+      Ldrive.write(POS);
+    }
+  }
 }
 
 void leftNeutral() {
@@ -217,7 +225,13 @@ void leftNeutral() {
 
 /* function to move the right drive forward */
 void rightForward() {
-  Rdrive.write(POS);
+  if (digitalRead(LIMSWUP_PIN) == HIGH) { // only allow the wheels to move if the auger is tripping the limit switches
+    if (toggleWheelSpeed) {
+      Rdrive.write(WHEEL_MOD);
+    } else {
+      Rdrive.write(POS);
+    }
+  }
 }
 
 /* function to move the right drive in reverse */
@@ -232,6 +246,15 @@ void rightNeutral() {
 /* function to move the left drive in reverse */
 void leftReverse() {
   Ldrive.write(NEG);
+}
+
+/* toggle wheel speed */
+int toggleWheelMod() {
+  if (!toggleWheelSpeed) {
+    return 1;
+  } else {
+    return 0;
+  }
 }
 
 /* 
@@ -288,6 +311,7 @@ int conveyerRev() {
     return 0;
   }
 }
+
 int augerOn() {
   if (!toggleAugOn) {
     digitalWrite(AUGPWR_PIN, ON);
@@ -312,16 +336,16 @@ int augerRev() {
 }
 
 int augerUp() {
-  if(digitalRead(LIMSWUP_PIN) == HIGH){//only allows the action if it's not at the top already
+  if (!digitalRead(LIMSWUP_PIN) == LOW) {//only allows the action if it's not at the top already
       digitalWrite(BSCRUP_PIN, HIGH); // Enables the left stepper motor to move in a particular direction
-      delay(wait);
+      delay(upwait);
       digitalWrite(BSCRUP_PIN, LOW); // Enables the left stepper motor to move in a particular direction
   }
 }
 
 int augerDown() {
 //  status_down = digitalRead(LIMSWDN_PIN);
- if(digitalRead(LIMSWDN_PIN) == HIGH){// only allows the action if it's not at the bottom already
+ if (!digitalRead(LIMSWDN_PIN) == LOW) {// only allows the action if it's not at the bottom already
       digitalWrite(BSCRDN_PIN, HIGH); // Enables the left stepper motor to move in a particular direction
       delay(wait);
       digitalWrite(BSCRDN_PIN, LOW); // Enables the left stepper motor to move in a particular direction
