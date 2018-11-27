@@ -235,7 +235,7 @@ class Outreach:
     @staticmethod
     def get_joystick():
         timeout = 0.0
-        timeout_limit = 10.0  # Timeout limit in seconds
+        timeout_limit = 30.0  # Timeout limit in seconds
 
         while pygame.joystick.get_count() == 0 and timeout < timeout_limit:
             time.sleep(0.1)
