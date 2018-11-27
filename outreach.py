@@ -9,6 +9,8 @@ import socket
 import serial
 import pygame
 import os
+import time
+import sys
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 ser = serial.Serial('/dev/ttyACM0', 9600)
@@ -30,10 +32,6 @@ class Outreach:
     pygame.joystick.init()  # init pygame joysticks
     os.putenv('DISPLAY', ':0.0')
     pygame.display.init()
-    joysticks = pygame.joystick.Joystick(0)
-
-    print(joysticks)  # print list of connected controllers
-
 
     def sendToArduino(self, command):
         ser.write(command)
@@ -234,6 +232,21 @@ class Outreach:
         elif conttype == "hat":
             self.handlehat(number, value)
 
+    @staticmethod
+    def get_joystick():
+        timeout = 0.0
+        timeout_limit = 10.0  # Timeout limit in seconds
+
+        while pygame.joystick.get_count() == 0 and timeout < timeout_limit:
+            time.sleep(0.1)
+            timeout += 0.1
+
+        if timeout >= timeout_limit:
+            print("No joystick found after ", timeout_limit, " seconds")
+            sys.exit(0)
+        else:
+            return pygame.joystick.Joystick(0)
+
     # Main Control Loop Below #
 
     def main(self):
@@ -243,7 +256,7 @@ class Outreach:
         :return: no return
         """
         while True:  # during control loop
-            joystick = pygame.joystick.Joystick(0)  # assume the first joystick found was the one intended to use
+            joystick = self.get_joystick()  # assume the first joystick found was the one intended to use
             joystick.init()                         # initialize the event handlers for the controller
             # command handling. events should be sent to server
             for event in pygame.event.get():        # pygame.event is a queue of commands sent from a controller
@@ -255,6 +268,8 @@ class Outreach:
                     self.handlecontrol(event.button,1,"button")
                 if event.type == pygame.JOYHATMOTION:   # if the command is a d-pad being pressed
                     self.handlecontrol(event.hat,event.value,"hat")
+
+
 
 
 
